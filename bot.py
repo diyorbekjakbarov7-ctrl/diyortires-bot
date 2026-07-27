@@ -43,7 +43,26 @@ def main():
 ).build()
 
     app.add_handler(CommandHandler("start", start))
-
+start))
+app.add_handler(
+    ConversationHandler(
+        entry_points=[
+            MessageHandler(
+                filters.Regex("^➕ Shina qo'shish$"),
+                add_tire_start
+            )
+        ],
+        states={
+            BRAND: [MessageHandler(filters.TEXT & ~filters.COMMAND, brand)],
+            MODEL: [MessageHandler(filters.TEXT & ~filters.COMMAND, model)],
+            SIZE: [MessageHandler(filters.TEXT & ~filters.COMMAND, size)],
+            DOT: [MessageHandler(filters.TEXT & ~filters.COMMAND, dot)],
+            PRICE: [MessageHandler(filters.TEXT & ~filters.COMMAND, price)],
+            QUANTITY: [MessageHandler(filters.TEXT & ~filters.COMMAND, quantity)],
+        },
+        fallbacks=[],
+    )
+)
     print("Bot ishga tushdi...")
 
     app.run_polling()
