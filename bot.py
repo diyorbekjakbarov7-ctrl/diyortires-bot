@@ -1,3 +1,24 @@
+from telegram.ext import (
+    MessageHandler,
+    ConversationHandler,
+    filters,
+)
+
+from handlers import (
+    add_tire_start,
+    brand,
+    model,
+    size,
+    dot,
+    price,
+    quantity,
+    BRAND,
+    MODEL,
+    SIZE,
+    DOT,
+    PRICE,
+    QUANTITY,
+)
 from telegram import Update
 from telegram.ext import (
     Application,
