@@ -41,3 +41,41 @@ async def size(update: Update, context: ContextTypes.DEFAULT_TYPE):
     context.user_data["size"] = update.message.text
     await update.message.reply_text("📅 DOT ni kiriting:")
     return DOT
+    async def dot(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    context.user_data["dot"] = update.message.text
+    await update.message.reply_text("💵 1 dona narxini kiriting (USD):")
+    return PRICE
+
+
+async def price(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    try:
+        context.user_data["price"] = float(update.message.text)
+    except ValueError:
+        await update.message.reply_text("❌ Narxni faqat raqam bilan kiriting. Masalan: 95")
+        return PRICE
+
+    await update.message.reply_text("📦 Ombordagi sonini kiriting:")
+    return QUANTITY
+
+
+async def quantity(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    try:
+        qty = int(update.message.text)
+    except ValueError:
+        await update.message.reply_text("❌ Sonni faqat raqam bilan kiriting.")
+        return QUANTITY
+
+    await add_tire(
+        context.user_data["brand"],
+        context.user_data["model"],
+        context.user_data["size"],
+        context.user_data["dot"],
+        context.user_data["price"],
+        qty,
+    )
+
+    await update.message.reply_text(
+        "✅ Shina muvaffaqiyatli qo'shildi!"
+    )
+
+    return ConversationHandler.END
