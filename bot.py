@@ -1,9 +1,16 @@
+from telegram import Update
 from telegram.ext import (
+    Application,
+    CommandHandler,
+    ContextTypes,
     MessageHandler,
     ConversationHandler,
     filters,
 )
 
+from config import BOT_TOKEN
+from database import init_db
+from keyboards import main_keyboard
 from handlers import (
     add_tire_start,
     brand,
@@ -19,16 +26,6 @@ from handlers import (
     PRICE,
     QUANTITY,
 )
-from telegram import Update
-from telegram.ext import (
-    Application,
-    CommandHandler,
-    ContextTypes,
-)
-
-from config import BOT_TOKEN
-from database import init_db
-from keyboards import main_keyboard
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -39,17 +36,15 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 def main():
-    app = Application.builder().token(8268094538:AAEClCd1BrDtd92lZ6YAoz4MoJX-QjnHfDs
-).build()
+    app = Application.builder().token(BOT_TOKEN).build()
 
     app.add_handler(CommandHandler("start", start))
-start))
-app.add_handler(
-    ConversationHandler(
+
+    conv_handler = ConversationHandler(
         entry_points=[
             MessageHandler(
                 filters.Regex("^➕ Shina qo'shish$"),
-                add_tire_start
+                add_tire_start,
             )
         ],
         states={
@@ -62,7 +57,9 @@ app.add_handler(
         },
         fallbacks=[],
     )
-)
+
+    app.add_handler(conv_handler)
+
     print("Bot ishga tushdi...")
 
     app.run_polling()
