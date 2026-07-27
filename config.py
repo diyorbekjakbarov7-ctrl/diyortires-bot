@@ -1,0 +1,8 @@
+import os
+
+8268094538:AAEClCd1BrDtd92lZ6YAoz4MoJX-QjnHfDs
+ = os.getenv("8268094538:AAEClCd1BrDtd92lZ6YAoz4MoJX-QjnHfDs
+")
+
+
+ADMIN_ID = 145311910
