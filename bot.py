@@ -7,28 +7,29 @@ from telegram.ext import (
 
 from config import BOT_TOKEN
 from database import init_db
+from keyboards import main_keyboard
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
-        "👋 Assalomu alaykum!\n\n"
-        "Diyor Tires ombor botiga xush kelibsiz.\n\n"
-        "Bot tayyorlanmoqda..."
+        "🏠 Diyor Tires ombor botiga xush kelibsiz!",
+        reply_markup=main_keyboard
     )
 
 
-async def main():
-    await init_db()
-
-    app = Application.builder().token(BOT_TOKEN).build()
+def main():
+    app = Application.builder().token(8268094538:AAEClCd1BrDtd92lZ6YAoz4MoJX-QjnHfDs
+).build()
 
     app.add_handler(CommandHandler("start", start))
 
     print("Bot ishga tushdi...")
 
-    await app.run_polling()
+    app.run_polling()
 
 
 if __name__ == "__main__":
     import asyncio
-    asyncio.run(main())
+
+    asyncio.run(init_db())
+    main()
