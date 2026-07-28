@@ -1,1 +1,0 @@
-# diyortires-bot
