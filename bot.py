@@ -1,5 +1,7 @@
 import asyncio
+import threading
 
+from flask import Flask
 from telegram import Update
 from telegram.ext import (
     Application,
@@ -24,6 +26,22 @@ from handlers import (
 from states import NAME, PRICE, QUANTITY
 
 
+# Render uchun web server
+web_app = Flask(__name__)
+
+
+@web_app.route("/")
+def home():
+    return "Diyortires bot ishlayapti!"
+
+
+def run_web():
+    web_app.run(
+        host="0.0.0.0",
+        port=10000
+    )
+
+
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
         "🛞 Avtoshina Ombor Botiga xush kelibsiz!\n\n"
@@ -32,13 +50,12 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
 
 
-async def run():
+async def run_bot():
     create_tables()
 
     app = Application.builder().token(BOT_TOKEN).build()
 
     app.add_handler(CommandHandler("start", start))
-
 
     add_product_handler = ConversationHandler(
         entry_points=[
@@ -47,6 +64,7 @@ async def run():
                 add_product_start
             )
         ],
+
         states={
             NAME: [
                 MessageHandler(
@@ -54,12 +72,14 @@ async def run():
                     product_name
                 )
             ],
+
             PRICE: [
                 MessageHandler(
                     filters.TEXT & ~filters.COMMAND,
                     product_price
                 )
             ],
+
             QUANTITY: [
                 MessageHandler(
                     filters.TEXT & ~filters.COMMAND,
@@ -67,6 +87,7 @@ async def run():
                 )
             ],
         },
+
         fallbacks=[]
     )
 
@@ -81,5 +102,14 @@ async def run():
     await asyncio.Event().wait()
 
 
+def main():
+    threading.Thread(
+        target=run_web,
+        daemon=True
+    ).start()
+
+    asyncio.run(run_bot())
+
+
 if __name__ == "__main__":
-    asyncio.run(run())
+    main()
