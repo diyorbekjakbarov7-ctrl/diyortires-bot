@@ -37,12 +37,14 @@ def create_tables():
 
 
 def add_product(name, price, quantity):
+
     conn = get_connection()
     cursor = conn.cursor()
 
     cursor.execute(
         """
-        INSERT INTO products (name, price, quantity)
+        INSERT INTO products
+        (name, price, quantity)
         VALUES (?, ?, ?)
         """,
         (name, price, quantity)
@@ -52,7 +54,8 @@ def add_product(name, price, quantity):
 
     cursor.execute(
         """
-        INSERT INTO history (product_id, action, quantity)
+        INSERT INTO history
+        (product_id, action, quantity)
         VALUES (?, ?, ?)
         """,
         (product_id, "ADD", quantity)
@@ -63,6 +66,7 @@ def add_product(name, price, quantity):
 
 
 def get_products():
+
     conn = get_connection()
     cursor = conn.cursor()
 
@@ -70,26 +74,27 @@ def get_products():
         "SELECT * FROM products ORDER BY id DESC"
     )
 
-    products = cursor.fetchall()
+    data = cursor.fetchall()
 
     conn.close()
 
-    return products
+    return data
+
 
 
 def sell_product(name, quantity):
+
     conn = get_connection()
     cursor = conn.cursor()
 
+
     cursor.execute(
-        """
-        SELECT * FROM products
-        WHERE name = ?
-        """,
+        "SELECT * FROM products WHERE name=?",
         (name,)
     )
 
     product = cursor.fetchone()
+
 
     if not product:
         conn.close()
@@ -101,16 +106,16 @@ def sell_product(name, quantity):
         return False, "Omborda yetarli emas"
 
 
-    new_quantity = product["quantity"] - quantity
+    new_count = product["quantity"] - quantity
 
 
     cursor.execute(
         """
         UPDATE products
-        SET quantity = ?
-        WHERE id = ?
+        SET quantity=?
+        WHERE id=?
         """,
-        (new_quantity, product["id"])
+        (new_count, product["id"])
     )
 
 
@@ -128,4 +133,30 @@ def sell_product(name, quantity):
     conn.close()
 
 
-    return True, new_quantity
+    return True, new_count
+
+
+
+def get_history():
+
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT
+            history.action,
+            history.quantity,
+            history.created_at,
+            products.name
+        FROM history
+        JOIN products
+        ON history.product_id = products.id
+        ORDER BY history.id DESC
+        LIMIT 20
+    """)
+
+    data = cursor.fetchall()
+
+    conn.close()
+
+    return data
