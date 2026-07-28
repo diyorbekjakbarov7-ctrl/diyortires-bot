@@ -79,3 +79,40 @@ async def quantity(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
 
     return ConversationHandler.END
+    from database import get_all_tires
+
+
+async def show_stock(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    tires = await get_all_tires()
+
+    if not tires:
+        await update.message.reply_text("📦 Ombor bo'sh.")
+        return
+
+    text = "📦 Ombordagi shinalar\n\n"
+
+    total_quantity = 0
+    total_value = 0
+
+    for tire in tires:
+        tire_id, brand, model, size, dot, price, quantity = tire
+
+        total_quantity += quantity
+        total_value += price * quantity
+
+        text += (
+            f"🛞 {brand} {model}\n"
+            f"📏 {size}\n"
+            f"📅 DOT: {dot}\n"
+            f"💲 ${price}\n"
+            f"📦 {quantity} dona\n"
+            f"💰 ${price * quantity}\n\n"
+        )
+
+    text += (
+        "──────────────\n"
+        f"📦 Jami: {total_quantity} dona\n"
+        f"💵 Umumiy qiymat: ${total_value}"
+    )
+
+    await update.message.reply_text(text)
