@@ -25,7 +25,7 @@ from handlers import (
     show_stock,
     sell_start,
     sell_name,
-    sell_quantity
+    sell_quantity,
     show_history
 )
 
