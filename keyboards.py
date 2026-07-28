@@ -2,17 +2,14 @@ from telegram import ReplyKeyboardMarkup, KeyboardButton
 
 
 def main_menu():
+
     keyboard = [
         [
-            KeyboardButton("📦 Ombor"),
-            KeyboardButton("➕ Tovar qo'shish")
+            KeyboardButton("➕ Tovar qo'shish"),
+            KeyboardButton("📦 Ombor")
         ],
         [
-            KeyboardButton("📥 Kirim"),
-            KeyboardButton("📤 Chiqim")
-        ],
-        [
-            KeyboardButton("📜 Tarix")
+            KeyboardButton("➖ Sotildi")
         ]
     ]
 
