@@ -13,7 +13,6 @@ def create_tables():
     conn = get_connection()
     cursor = conn.cursor()
 
-    # Mahsulotlar
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS products (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -23,7 +22,6 @@ def create_tables():
         )
     """)
 
-    # Tarix
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS history (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -37,7 +35,9 @@ def create_tables():
 
     conn.commit()
     conn.close()
-    def add_product(name, price, quantity):
+
+
+def add_product(name, price, quantity):
     conn = get_connection()
     cursor = conn.cursor()
 
@@ -51,7 +51,6 @@ def create_tables():
 
     product_id = cursor.lastrowid
 
-    # Tarixga yozish
     cursor.execute(
         """
         INSERT INTO history (product_id, action, quantity)
