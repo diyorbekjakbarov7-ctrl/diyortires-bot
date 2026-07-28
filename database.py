@@ -61,18 +61,13 @@ def add_product(name, price, quantity):
     conn.commit()
     conn.close()
 
-    return product_id
-
 
 def get_products():
     conn = get_connection()
     cursor = conn.cursor()
 
     cursor.execute(
-        """
-        SELECT * FROM products
-        ORDER BY id DESC
-        """
+        "SELECT * FROM products ORDER BY id DESC"
     )
 
     products = cursor.fetchall()
@@ -80,3 +75,57 @@ def get_products():
     conn.close()
 
     return products
+
+
+def sell_product(name, quantity):
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute(
+        """
+        SELECT * FROM products
+        WHERE name = ?
+        """,
+        (name,)
+    )
+
+    product = cursor.fetchone()
+
+    if not product:
+        conn.close()
+        return False, "Tovar topilmadi"
+
+
+    if product["quantity"] < quantity:
+        conn.close()
+        return False, "Omborda yetarli emas"
+
+
+    new_quantity = product["quantity"] - quantity
+
+
+    cursor.execute(
+        """
+        UPDATE products
+        SET quantity = ?
+        WHERE id = ?
+        """,
+        (new_quantity, product["id"])
+    )
+
+
+    cursor.execute(
+        """
+        INSERT INTO history
+        (product_id, action, quantity)
+        VALUES (?, ?, ?)
+        """,
+        (product["id"], "SELL", quantity)
+    )
+
+
+    conn.commit()
+    conn.close()
+
+
+    return True, new_quantity
