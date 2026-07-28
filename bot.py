@@ -2,12 +2,24 @@ from telegram import Update
 from telegram.ext import (
     Application,
     CommandHandler,
-    ContextTypes
+    ContextTypes,
+    ConversationHandler,
+    MessageHandler,
+    filters
 )
 
 from config import BOT_TOKEN
 from keyboards import main_menu
 from database import create_tables
+
+from handlers import (
+    add_product_start,
+    product_name,
+    product_price,
+    product_quantity
+)
+
+from states import NAME, PRICE, QUANTITY
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
