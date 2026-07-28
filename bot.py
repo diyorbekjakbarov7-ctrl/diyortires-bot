@@ -22,10 +22,19 @@ from handlers import (
     product_name,
     product_price,
     product_quantity,
-    show_stock
+    show_stock,
+    sell_start,
+    sell_name,
+    sell_quantity
 )
 
-from states import NAME, PRICE, QUANTITY
+from states import (
+    NAME,
+    PRICE,
+    QUANTITY,
+    SELL_NAME,
+    SELL_QUANTITY
+)
 
 
 # Render uchun web server
@@ -45,6 +54,7 @@ def run_web():
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+
     await update.message.reply_text(
         "🛞 Avtoshina Ombor Botiga xush kelibsiz!\n\n"
         "Kerakli bo'limni tanlang:",
@@ -59,7 +69,7 @@ async def run_bot():
     app = Application.builder().token(BOT_TOKEN).build()
 
 
-    # Start komandasi
+    # /start
     app.add_handler(
         CommandHandler(
             "start",
@@ -78,7 +88,7 @@ async def run_bot():
 
 
     # ➕ Tovar qo'shish
-    add_product_handler = ConversationHandler(
+    add_handler = ConversationHandler(
 
         entry_points=[
             MessageHandler(
@@ -116,9 +126,44 @@ async def run_bot():
     )
 
 
-    app.add_handler(
-        add_product_handler
+    app.add_handler(add_handler)
+
+
+
+    # ➖ Sotildi
+    sell_handler = ConversationHandler(
+
+        entry_points=[
+            MessageHandler(
+                filters.Regex("^➖ Sotildi$"),
+                sell_start
+            )
+        ],
+
+        states={
+
+            SELL_NAME: [
+                MessageHandler(
+                    filters.TEXT & ~filters.COMMAND,
+                    sell_name
+                )
+            ],
+
+            SELL_QUANTITY: [
+                MessageHandler(
+                    filters.TEXT & ~filters.COMMAND,
+                    sell_quantity
+                )
+            ]
+
+        },
+
+        fallbacks=[]
     )
+
+
+    app.add_handler(sell_handler)
+
 
 
     print("Bot ishga tushdi...")
@@ -141,9 +186,7 @@ def main():
     ).start()
 
 
-    asyncio.run(
-        run_bot()
-    )
+    asyncio.run(run_bot())
 
 
 
