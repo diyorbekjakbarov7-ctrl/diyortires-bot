@@ -13,6 +13,7 @@ from database import (
     add_product,
     get_products,
     sell_product
+    get_history
 )
 
 
@@ -146,3 +147,34 @@ async def sell_quantity(update: Update, context: ContextTypes.DEFAULT_TYPE):
     context.user_data.clear()
 
     return ConversationHandler.END
+    async def show_history(update: Update, context: ContextTypes.DEFAULT_TYPE):
+
+    history = get_history()
+
+    if not history:
+        await update.message.reply_text(
+            "📜 Tarix bo'sh."
+        )
+        return
+
+
+    text = "📜 Tarix:\n\n"
+
+
+    for item in history:
+
+        if item["action"] == "ADD":
+            action = "➕ Qo'shildi"
+        else:
+            action = "➖ Sotildi"
+
+
+        text += (
+            f"{action}\n"
+            f"🛞 {item['name']}\n"
+            f"🔢 {item['quantity']} dona\n"
+            f"📅 {item['created_at']}\n\n"
+        )
+
+
+    await update.message.reply_text(text)
