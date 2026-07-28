@@ -1,3 +1,5 @@
+import asyncio
+
 from telegram import Update
 from telegram.ext import (
     Application,
@@ -30,30 +32,45 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
 
 
-def main():
-    # Bazani yaratish
-    create_tables()
-
-    # Botni ishga tushirish
-    app = Application.builder().token(BOT_TOKEN).build()
-
-    # /start
-    app.add_handler(CommandHandler("start", start))
-
-    print("Bot ishga tushdi...")
-
-    app.run_polling()
-
-
-import asyncio
-
-
 async def run():
     create_tables()
 
     app = Application.builder().token(BOT_TOKEN).build()
 
     app.add_handler(CommandHandler("start", start))
+
+
+    add_product_handler = ConversationHandler(
+        entry_points=[
+            MessageHandler(
+                filters.Regex("^➕ Tovar qo'shish$"),
+                add_product_start
+            )
+        ],
+        states={
+            NAME: [
+                MessageHandler(
+                    filters.TEXT & ~filters.COMMAND,
+                    product_name
+                )
+            ],
+            PRICE: [
+                MessageHandler(
+                    filters.TEXT & ~filters.COMMAND,
+                    product_price
+                )
+            ],
+            QUANTITY: [
+                MessageHandler(
+                    filters.TEXT & ~filters.COMMAND,
+                    product_quantity
+                )
+            ],
+        },
+        fallbacks=[]
+    )
+
+    app.add_handler(add_product_handler)
 
     print("Bot ishga tushdi...")
 
