@@ -28,8 +28,7 @@ def create_tables():
             product_id INTEGER,
             action TEXT NOT NULL,
             quantity INTEGER NOT NULL,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY(product_id) REFERENCES products(id)
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
     """)
 
@@ -63,7 +62,9 @@ def add_product(name, price, quantity):
     conn.close()
 
     return product_id
-    def get_products():
+
+
+def get_products():
     conn = get_connection()
     cursor = conn.cursor()
 
