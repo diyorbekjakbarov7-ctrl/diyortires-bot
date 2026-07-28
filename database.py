@@ -37,3 +37,30 @@ def create_tables():
 
     conn.commit()
     conn.close()
+    def add_product(name, price, quantity):
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute(
+        """
+        INSERT INTO products (name, price, quantity)
+        VALUES (?, ?, ?)
+        """,
+        (name, price, quantity)
+    )
+
+    product_id = cursor.lastrowid
+
+    # Tarixga yozish
+    cursor.execute(
+        """
+        INSERT INTO history (product_id, action, quantity)
+        VALUES (?, ?, ?)
+        """,
+        (product_id, "ADD", quantity)
+    )
+
+    conn.commit()
+    conn.close()
+
+    return product_id
