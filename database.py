@@ -63,3 +63,19 @@ def add_product(name, price, quantity):
     conn.close()
 
     return product_id
+    def get_products():
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute(
+        """
+        SELECT * FROM products
+        ORDER BY id DESC
+        """
+    )
+
+    products = cursor.fetchall()
+
+    conn.close()
+
+    return products
