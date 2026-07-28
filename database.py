@@ -115,7 +115,9 @@ def get_products():
     conn.close()
 
     return products
-    def sell_product(name, quantity):
+
+
+def sell_product(name, quantity):
     conn = get_connection()
     cursor = conn.cursor()
 
@@ -153,11 +155,14 @@ def get_products():
     conn.close()
 
     return True, "Sotuv muvaffaqiyatli bajarildi."
-    def get_history():
+
+
+def get_history():
     conn = get_connection()
     cursor = conn.cursor()
 
-    cursor.execute("""
+    cursor.execute(
+        """
         SELECT
             h.action,
             p.name,
@@ -167,14 +172,17 @@ def get_products():
         JOIN products p
         ON p.id = h.product_id
         ORDER BY h.id DESC
-    """)
+        """
+    )
 
     data = cursor.fetchall()
 
     conn.close()
 
     return data
-    def search_product(keyword):
+
+
+def search_product(keyword):
     conn = get_connection()
     cursor = conn.cursor()
 
@@ -193,7 +201,9 @@ def get_products():
     conn.close()
 
     return data
-    def update_product(product_id, price, quantity):
+
+
+def update_product(product_id, price, quantity):
     conn = get_connection()
     cursor = conn.cursor()
 
@@ -210,7 +220,9 @@ def get_products():
 
     conn.commit()
     conn.close()
-    def delete_product(product_id):
+
+
+def delete_product(product_id):
     conn = get_connection()
     cursor = conn.cursor()
 
