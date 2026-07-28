@@ -2,6 +2,7 @@ import asyncio
 import threading
 
 from flask import Flask
+
 from telegram import Update
 from telegram.ext import (
     Application,
@@ -52,13 +53,33 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def run_bot():
+
     create_tables()
 
     app = Application.builder().token(BOT_TOKEN).build()
 
-    app.add_handler(CommandHandler("start", start))
 
+    # Start komandasi
+    app.add_handler(
+        CommandHandler(
+            "start",
+            start
+        )
+    )
+
+
+    # 📦 Ombor
+    app.add_handler(
+        MessageHandler(
+            filters.Regex("^📦 Ombor$"),
+            show_stock
+        )
+    )
+
+
+    # ➕ Tovar qo'shish
     add_product_handler = ConversationHandler(
+
         entry_points=[
             MessageHandler(
                 filters.Regex("^➕ Tovar qo'shish$"),
@@ -67,6 +88,7 @@ async def run_bot():
         ],
 
         states={
+
             NAME: [
                 MessageHandler(
                     filters.TEXT & ~filters.COMMAND,
@@ -86,30 +108,43 @@ async def run_bot():
                     filters.TEXT & ~filters.COMMAND,
                     product_quantity
                 )
-            ],
+            ]
+
         },
 
         fallbacks=[]
     )
 
-    app.add_handler(add_product_handler)
+
+    app.add_handler(
+        add_product_handler
+    )
+
 
     print("Bot ishga tushdi...")
+
 
     await app.initialize()
     await app.start()
     await app.updater.start_polling()
 
+
     await asyncio.Event().wait()
 
 
+
 def main():
+
     threading.Thread(
         target=run_web,
         daemon=True
     ).start()
 
-    asyncio.run(run_bot())
+
+    asyncio.run(
+        run_bot()
+    )
+
 
 
 if __name__ == "__main__":
