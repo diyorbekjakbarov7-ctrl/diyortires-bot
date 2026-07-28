@@ -1,15 +1,25 @@
 from telegram import Update
 from telegram.ext import ContextTypes, ConversationHandler
 
-from states import NAME, PRICE, QUANTITY
-from database import add_product, get_products
+from states import (
+    NAME,
+    PRICE,
+    QUANTITY,
+    SELL_NAME,
+    SELL_QUANTITY
+)
+
+from database import (
+    add_product,
+    get_products,
+    sell_product
+)
 
 
 async def add_product_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
         "📝 Tovar nomini kiriting:"
     )
-
     return NAME
 
 
@@ -24,23 +34,17 @@ async def product_name(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def product_price(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    text = update.message.text.strip()
+
+    text = update.message.text.replace("$", "").replace(" ", "")
 
     try:
-        price = int(
-            text.replace("$", "")
-                .replace(" ", "")
-                .replace(",", "")
-        )
-
-    except ValueError:
+        price = int(text)
+    except:
         await update.message.reply_text(
-            "❌ Narx noto'g'ri.\n\n"
-            "Misol:\n"
-            "45$\n"
-            "850000"
+            "❌ Narx noto'g'ri"
         )
         return PRICE
+
 
     context.user_data["price"] = price
 
@@ -52,30 +56,17 @@ async def product_price(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def product_quantity(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    try:
-        quantity = int(update.message.text)
 
-    except ValueError:
-        await update.message.reply_text(
-            "❌ Son faqat raqam bo'lishi kerak.\n"
-            "Misol: 10"
-        )
-        return QUANTITY
-
-    name = context.user_data["name"]
-    price = context.user_data["price"]
+    quantity = int(update.message.text)
 
     add_product(
-        name,
-        price,
+        context.user_data["name"],
+        context.user_data["price"],
         quantity
     )
 
     await update.message.reply_text(
-        "✅ Tovar qo'shildi\n\n"
-        f"🛞 Nomi: {name}\n"
-        f"💰 Narxi: {price}\n"
-        f"🔢 Soni: {quantity} dona"
+        "✅ Tovar qo'shildi"
     )
 
     context.user_data.clear()
@@ -90,17 +81,68 @@ async def show_stock(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     if not products:
         await update.message.reply_text(
-            "📦 Ombor bo'sh."
+            "📦 Ombor bo'sh"
         )
         return
 
+
     text = "📦 Ombor:\n\n"
 
-    for product in products:
+    for p in products:
         text += (
-            f"🛞 {product['name']}\n"
-            f"💰 Narxi: {product['price']}\n"
-            f"🔢 Soni: {product['quantity']} dona\n\n"
+            f"🛞 {p['name']}\n"
+            f"💰 {p['price']}\n"
+            f"🔢 {p['quantity']} dona\n\n"
         )
 
     await update.message.reply_text(text)
+
+
+
+async def sell_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+
+    await update.message.reply_text(
+        "🛞 Sotilgan shina nomini kiriting:"
+    )
+
+    return SELL_NAME
+
+
+
+async def sell_name(update: Update, context: ContextTypes.DEFAULT_TYPE):
+
+    context.user_data["sell_name"] = update.message.text
+
+    await update.message.reply_text(
+        "🔢 Nechta sotildi?"
+    )
+
+    return SELL_QUANTITY
+
+
+
+async def sell_quantity(update: Update, context: ContextTypes.DEFAULT_TYPE):
+
+    quantity = int(update.message.text)
+
+    success, result = sell_product(
+        context.user_data["sell_name"],
+        quantity
+    )
+
+
+    if success:
+        await update.message.reply_text(
+            f"✅ Ombor yangilandi\n\n"
+            f"Qoldi: {result} dona"
+        )
+
+    else:
+        await update.message.reply_text(
+            f"❌ {result}"
+        )
+
+
+    context.user_data.clear()
+
+    return ConversationHandler.END
