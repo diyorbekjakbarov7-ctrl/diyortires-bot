@@ -9,6 +9,7 @@ async def add_product_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
         "📝 Tovar nomini kiriting:"
     )
+
     return NAME
 
 
@@ -23,7 +24,16 @@ async def product_name(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def product_price(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    context.user_data["price"] = int(update.message.text)
+    try:
+        price = int(update.message.text)
+    except ValueError:
+        await update.message.reply_text(
+            "❌ Narx faqat raqam bo'lishi kerak.\n\n"
+            "Misol: 850000"
+        )
+        return PRICE
+
+    context.user_data["price"] = price
 
     await update.message.reply_text(
         "🔢 Soni kiriting:"
@@ -33,10 +43,17 @@ async def product_price(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def product_quantity(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    quantity = int(update.message.text)
+    try:
+        quantity = int(update.message.text)
+    except ValueError:
+        await update.message.reply_text(
+            "❌ Son faqat raqam bo'lishi kerak.\n\n"
+            "Misol: 10"
+        )
+        return QUANTITY
 
-    name = context.user_data["name"]
-    price = context.user_data["price"]
+    name = context.user_data.get("name")
+    price = context.user_data.get("price")
 
     add_product(
         name,
@@ -46,9 +63,9 @@ async def product_quantity(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     await update.message.reply_text(
         "✅ Tovar qo'shildi\n\n"
-        f"Nomi: {name}\n"
-        f"Narxi: {price} so'm\n"
-        f"Soni: {quantity} dona"
+        f"🛞 Nomi: {name}\n"
+        f"💰 Narxi: {price} so'm\n"
+        f"🔢 Soni: {quantity} dona"
     )
 
     context.user_data.clear()
