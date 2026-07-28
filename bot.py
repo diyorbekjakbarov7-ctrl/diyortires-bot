@@ -19,6 +19,7 @@ from handlers import (
     dot,
     price,
     quantity,
+    show_stock,
     BRAND,
     MODEL,
     SIZE,
@@ -31,7 +32,7 @@ from handlers import (
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
         "🏠 Diyor Tires ombor botiga xush kelibsiz!",
-        reply_markup=main_keyboard
+        reply_markup=main_keyboard,
     )
 
 
@@ -59,6 +60,13 @@ def main():
     )
 
     app.add_handler(conv_handler)
+
+    app.add_handler(
+        MessageHandler(
+            filters.Regex("^📦 Ombor$"),
+            show_stock,
+        )
+    )
 
     print("Bot ishga tushdi...")
 
