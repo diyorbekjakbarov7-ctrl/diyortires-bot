@@ -18,11 +18,7 @@ from database import add_tire, get_all_tires
 
 async def add_tire_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     context.user_data.clear()
-
-    await update.message.reply_text(
-        "🛞 Shina brendini kiriting:"
-    )
-
+    await update.message.reply_text("🛞 Shina brendini kiriting:")
     return BRAND
 
 
@@ -36,7 +32,9 @@ async def model(update: Update, context: ContextTypes.DEFAULT_TYPE):
     context.user_data["model"] = update.message.text
     await update.message.reply_text("📏 Razmerni kiriting:")
     return SIZE
-    async def size(update: Update, context: ContextTypes.DEFAULT_TYPE):
+
+
+async def size(update: Update, context: ContextTypes.DEFAULT_TYPE):
     context.user_data["size"] = update.message.text
     await update.message.reply_text("📅 DOT ni kiriting:")
     return DOT
@@ -92,7 +90,9 @@ async def quantity(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
 
     return ConversationHandler.END
-    async def show_stock(update: Update, context: ContextTypes.DEFAULT_TYPE):
+
+
+async def show_stock(update: Update, context: ContextTypes.DEFAULT_TYPE):
     tires = await get_all_tires()
 
     if not tires:
