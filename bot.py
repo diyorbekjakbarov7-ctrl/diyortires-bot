@@ -26,6 +26,7 @@ from handlers import (
     sell_start,
     sell_name,
     sell_quantity
+    show_history
 )
 
 from states import (
@@ -78,13 +79,26 @@ async def run_bot():
     )
 
 
-    # 📦 Ombor
     app.add_handler(
-        MessageHandler(
-            filters.Regex("^📦 Ombor$"),
-            show_stock
-        )
+    CommandHandler(
+        "start",
+        start
     )
+)
+
+app.add_handler(
+    MessageHandler(
+        filters.Regex("^📜 Tarix$"),
+        show_history
+    )
+)
+
+app.add_handler(
+    MessageHandler(
+        filters.Regex("^📦 Ombor$"),
+        show_stock
+    )
+)
 
 
     # ➕ Tovar qo'shish
