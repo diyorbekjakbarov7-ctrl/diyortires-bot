@@ -20,7 +20,8 @@ from handlers import (
     add_product_start,
     product_name,
     product_price,
-    product_quantity
+    product_quantity,
+    show_stock
 )
 
 from states import NAME, PRICE, QUANTITY
