@@ -9,7 +9,8 @@ def main_menu():
             KeyboardButton("📦 Ombor")
         ],
         [
-            KeyboardButton("➖ Sotildi")
+            KeyboardButton("➖ Sotildi"),
+            KeyboardButton("📜 Tarix")
         ]
     ]
 
